@@ -36,23 +36,25 @@ class ProductManager {
   };
 
   getProductById = (id) => {
-    for (let index = 0; index < this.products.length; index++) {
-      if (this.products[index].id == id) {
-        let resultado = true;
+    let resultado = 0;
+
+    this.products.forEach((product) => {
+      if (product.id == id) {
+        resultado += 1;
+        console.log("Se encontro el producto: ");
+        console.log(product);
       }
-    }
-    if (resultado) {
-      console.log("ingresa al if");
-      console.log(this.products[index]);
-    } else {
+    });
+
+    if (resultado < 1) {
       console.log("No se encuentra el producto");
     }
   };
 }
 
-const product09 = new ProductManager();
+const totalProducts = new ProductManager();
 
-product09.addProduct(
+totalProducts.addProduct(
   "producto prueba",
   "Este es un producto prueba",
   200,
@@ -61,13 +63,13 @@ product09.addProduct(
   25
 );
 
-product09.addProduct(
+totalProducts.addProduct(
   "producto prueba",
   "Este es un producto prueba",
   200,
   "Sin imagen",
-  "abc124",
+  "abc123",
   25
 );
-
-product09.getProductById(2);
+console.log("=============================");
+totalProducts.getProductById(1);
