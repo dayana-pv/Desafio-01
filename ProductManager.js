@@ -28,10 +28,27 @@ class ProductManager {
       stock,
     };
 
-    if (product.id >= 2 && product.code.includes("abc123")) {
-      console.log("ERROR, Codigo repetido");
+    if (
+      product.title == undefined ||
+      product.description == undefined ||
+      product.price == undefined ||
+      product.thumbnail == undefined ||
+      product.code == undefined ||
+      product.stock == undefined
+    ) {
+      console.log("Falta ingresar campos en el producto");
     } else {
-      this.products.push(product);
+      let resultado = 0;
+      this.products.forEach((element) => {
+        if (product.code.includes(element.code)) {
+          resultado += 1;
+          console.log("ERROR, Codigo repetido");
+        }
+      });
+
+      if (resultado < 1) {
+        this.products.push(product);
+      }
     }
   };
 
@@ -54,6 +71,8 @@ class ProductManager {
 
 const totalProducts = new ProductManager();
 
+totalProducts.addProduct("producto prueba", "Este es un producto prueba", 200);
+
 totalProducts.addProduct(
   "producto prueba",
   "Este es un producto prueba",
@@ -71,5 +90,6 @@ totalProducts.addProduct(
   "abc123",
   25
 );
+
 console.log("=============================");
 totalProducts.getProductById(1);
