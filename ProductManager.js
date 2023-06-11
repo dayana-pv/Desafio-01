@@ -6,17 +6,6 @@ class ProductManager {
     this.path = path;
   }
 
-  /*
-  read = () => {
-    if (fs.existsSync(this.path)) {
-      console.log("Ingreso aqui");
-      return fs.promises
-        .readFile(this.path, "utf-8")
-        .then((r) => JSON.parse(r));
-    } else return [];
-  };
-  */
-
   getProducts = () => {
     return this.products;
   };
@@ -107,22 +96,21 @@ class ProductManager {
           default:
             console.log(`El campo ${campo} no existe.`);
         }
+        console.log("Se realizo la actualizacion del producto: ");
         console.log(product);
       }
     });
   };
 
   deleteProduct = (id) => {
-    if (product.id == id) {
-      this.product = this.product.filter((item) => item !== id);
-    }
-    console.log(product);
+    this.products = this.products.filter((item) => item.id !== id);
+    console.log("Productos: ");
+    console.log(this.products);
   };
 }
 
 const totalProducts = new ProductManager();
 
-/*
 totalProducts.addProduct("producto prueba", "Este es un producto prueba", 200);
 
 totalProducts.addProduct(
@@ -133,7 +121,7 @@ totalProducts.addProduct(
   "abc123",
   25
 );
-*/
+
 totalProducts.addProduct(
   "producto prueba",
   "Este es un producto prueba",
@@ -152,10 +140,11 @@ totalProducts.addProduct(
   30
 );
 
-//console.log("=============================");
-//totalProducts.getProductById(1);
+console.log("=============================");
+totalProducts.getProductById(1);
 
-//totalProducts.updateProduct(2, "price", 400);
+console.log("=============================");
+totalProducts.updateProduct(2, "price", 400);
 
+console.log("=============================");
 totalProducts.deleteProduct(2);
-//const totalProducts = new ProductManager("db.json");
