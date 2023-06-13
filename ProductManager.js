@@ -19,11 +19,7 @@ class Product {
     const list = await this.getProduct();
     const count = list.length;
 
-    if (count > 0) {
-      return list[count - 1].id + 1;
-    } else {
-      return 1;
-    }
+    return count > 0 ? list[count - 1].id + 1 : 1;
   };
 
   addProduct = async (title, description, price, thumbnail, code, stock) => {
@@ -40,52 +36,40 @@ class Product {
     const list = await this.getProduct();
 
     if (
-      product.title == undefined ||
-      product.description == undefined ||
-      product.price == undefined ||
-      product.thumbnail == undefined ||
-      product.code == undefined ||
-      product.stock == undefined
+      product.title === undefined ||
+      product.description === undefined ||
+      product.price === undefined ||
+      product.thumbnail === undefined ||
+      product.code === undefined ||
+      product.stock === undefined
     ) {
       console.log("Falta ingresar campos en el producto");
     } else {
-      let resultado = 0;
-      list.forEach((element) => {
-        if (product.code.includes(element.code)) {
-          resultado += 1;
-          console.log(`ERROR, el codigo ${product.code} es repetido`);
-        }
-      });
-
-      if (resultado < 1) {
-        list.push(product);
-        await fs.promises.writeFile(this.path, JSON.stringify(list));
-      }
+      const products = list.some((product) => product.code.includes(code));
+      products
+        ? console.log(`ERROR, el codigo es repetido`)
+        : list.push(product);
+      await fs.promises.writeFile(this.path, JSON.stringify(list));
     }
   };
 
   getProductById = async (id) => {
-    let resultado = 0;
     const list = await this.getProduct();
 
-    list.forEach((product) => {
-      if (product.id == id) {
-        resultado += 1;
-        console.log("Se encontro el producto: ");
-        console.log(product);
-      }
-    });
+    const productExist = list.some((product) => product.id === id);
 
-    if (resultado < 1) {
-      console.log("No se encuentra el producto");
-    }
+    productExist
+      ? console.log("Se encontro el producto")
+      : console.log("No se encuentra el producto");
+
+    console.log(list.filter((product) => product.id === id));
   };
 
   updateProduct = async (id, campo, valor) => {
     let resultado = true;
     const list = await this.getProduct();
     list.forEach((product) => {
-      if (product.id == id) {
+      if (product.id === id) {
         switch (campo) {
           case "title":
             product.title = valor;
@@ -121,8 +105,12 @@ class Product {
   };
 
   deleteProduct = async (id) => {
-    console.log(`Se elimino el producto con id: ${id}`);
     const list = await this.getProduct();
+    const products = list.some((product) => product.id === id);
+    products
+      ? console.log(`Se elimino el producto con id: ${id}`)
+      : console.log(`No se encontro el producto`);
+
     await fs.promises.writeFile(
       this.path,
       JSON.stringify(list.filter((item) => item.id !== id))
@@ -132,6 +120,7 @@ class Product {
 
 async function run() {
   const totalProducts = new Product("products.json");
+
   await totalProducts.addProduct(
     "producto prueba",
     "Este es un producto prueba",
