@@ -1,28 +1,34 @@
 const fs = require("fs");
 
-class ProductManager {
+class Product {
   constructor(path) {
-    this.products = [];
     this.path = path;
   }
 
-  getProducts = () => {
-    return this.products;
+  getProduct = async () => {
+    if (fs.existsSync(this.path)) {
+      const data = await fs.promises.readFile(this.path, "utf-8");
+      if (data.length > 0) {
+        const dataObj = JSON.parse(data);
+        return dataObj;
+      }
+    } else return [];
   };
 
-  getNextID = () => {
-    const count = this.products.length;
+  getNextID = async () => {
+    const list = await this.getProduct();
+    const count = list.length;
 
     if (count > 0) {
-      return this.products[count - 1].id + 1;
+      return list[count - 1].id + 1;
     } else {
       return 1;
     }
   };
 
-  addProduct = (title, description, price, thumbnail, code, stock) => {
+  addProduct = async (title, description, price, thumbnail, code, stock) => {
     const product = {
-      id: this.getNextID(),
+      id: await this.getNextID(),
       title,
       description,
       price,
@@ -30,6 +36,8 @@ class ProductManager {
       code,
       stock,
     };
+
+    const list = await this.getProduct();
 
     if (
       product.title == undefined ||
@@ -42,23 +50,25 @@ class ProductManager {
       console.log("Falta ingresar campos en el producto");
     } else {
       let resultado = 0;
-      this.products.forEach((element) => {
+      list.forEach((element) => {
         if (product.code.includes(element.code)) {
           resultado += 1;
-          console.log("ERROR, Codigo repetido");
+          console.log(`ERROR, el codigo ${product.code} es repetido`);
         }
       });
 
       if (resultado < 1) {
-        this.products.push(product);
+        list.push(product);
+        await fs.promises.writeFile(this.path, JSON.stringify(list));
       }
     }
   };
 
-  getProductById = (id) => {
+  getProductById = async (id) => {
     let resultado = 0;
+    const list = await this.getProduct();
 
-    this.products.forEach((product) => {
+    list.forEach((product) => {
       if (product.id == id) {
         resultado += 1;
         console.log("Se encontro el producto: ");
@@ -71,8 +81,10 @@ class ProductManager {
     }
   };
 
-  updateProduct = (id, campo, valor) => {
-    this.products.forEach((product) => {
+  updateProduct = async (id, campo, valor) => {
+    let resultado = true;
+    const list = await this.getProduct();
+    list.forEach((product) => {
       if (product.id == id) {
         switch (campo) {
           case "title":
@@ -89,62 +101,82 @@ class ProductManager {
             break;
           case "code":
             product.code = valor;
-            break;
           case "stock":
             product.stock = valor;
             break;
           default:
+            resultado = false;
             console.log(`El campo ${campo} no existe.`);
+            break;
         }
-        console.log("Se realizo la actualizacion del producto: ");
+
+        if (resultado) {
+          console.log("Se realizo la actualizacion del producto: ");
+        }
+
         console.log(product);
       }
     });
+    await fs.promises.writeFile(this.path, JSON.stringify(list));
   };
 
-  deleteProduct = (id) => {
-    this.products = this.products.filter((item) => item.id !== id);
-    console.log("Productos: ");
-    console.log(this.products);
+  deleteProduct = async (id) => {
+    console.log(`Se elimino el producto con id: ${id}`);
+    const list = await this.getProduct();
+    await fs.promises.writeFile(
+      this.path,
+      JSON.stringify(list.filter((item) => item.id !== id))
+    );
   };
 }
 
-const totalProducts = new ProductManager();
+async function run() {
+  const totalProducts = new Product("products.json");
+  await totalProducts.addProduct(
+    "producto prueba",
+    "Este es un producto prueba",
+    200
+  );
 
-totalProducts.addProduct("producto prueba", "Este es un producto prueba", 200);
+  await totalProducts.addProduct(
+    "producto prueba",
+    "Este es un producto prueba",
+    200,
+    "Sin imagen",
+    "abc123",
+    25
+  );
 
-totalProducts.addProduct(
-  "producto prueba",
-  "Este es un producto prueba",
-  200,
-  "Sin imagen",
-  "abc123",
-  25
-);
+  await totalProducts.addProduct(
+    "producto prueba",
+    "Este es un producto prueba",
+    200,
+    "Sin imagen",
+    "abc123",
+    25
+  );
 
-totalProducts.addProduct(
-  "producto prueba",
-  "Este es un producto prueba",
-  200,
-  "Sin imagen",
-  "abc123",
-  25
-);
+  await totalProducts.addProduct(
+    "producto",
+    "Este es un producto prueba",
+    500,
+    "Sin imagen",
+    "abc124",
+    30
+  );
 
-totalProducts.addProduct(
-  "producto",
-  "Este es un producto prueba",
-  500,
-  "Sin imagen",
-  "abc124",
-  30
-);
+  console.log("=============================");
+  console.log("Productos:");
+  console.log(await totalProducts.getProduct());
 
-console.log("=============================");
-totalProducts.getProductById(1);
+  console.log("=============================");
+  await totalProducts.getProductById(2);
 
-console.log("=============================");
-totalProducts.updateProduct(2, "price", 400);
+  console.log("=============================");
+  await totalProducts.updateProduct(2, "price", 400);
 
-console.log("=============================");
-totalProducts.deleteProduct(2);
+  console.log("=============================");
+  await totalProducts.deleteProduct(2);
+}
+
+run();
