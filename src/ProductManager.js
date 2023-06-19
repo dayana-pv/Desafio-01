@@ -1,6 +1,7 @@
-const fs = require("fs");
+//const fs = require("fs");
+import fs from "fs";
 
-class Product {
+export default class Product {
   constructor(path) {
     this.path = path;
   }
@@ -153,7 +154,7 @@ async function run() {
     "abc124",
     30
   );
-
+  /*
   console.log("=============================");
   console.log("Productos:");
   console.log(await totalProducts.getProduct());
@@ -166,6 +167,8 @@ async function run() {
 
   console.log("=============================");
   await totalProducts.deleteProduct(2);
+
+  */
 }
 
-run();
+//run();
