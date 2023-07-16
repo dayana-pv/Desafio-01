@@ -9,4 +9,3 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 
 app.listen(8080);
-//192.168.0.108:8080/api/products/?limit=3

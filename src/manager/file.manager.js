@@ -19,6 +19,11 @@ class FileManager {
     } else return [];
   };
 
+  getById = async (id) => {
+    const data = await this.getProduct();
+    return data.find((d) => d.id == id);
+  };
+
   addProduct = async (data) => {
     const list = await this.getProduct();
 
@@ -41,11 +46,17 @@ class FileManager {
     }
   };
 
+  addCart = async (data) => {
+    const list = await this.getProduct();
+    data.id = this.getNextId(list);
+    list.push(data);
+    return fs.promises.writeFile(this.filename, JSON.stringify(list));
+  };
+
   updateProduct = async (id, data) => {
     const list = await this.getProduct();
     const productIdx = list.findIndex((u) => u.id === id);
 
-    console.log(list);
     list[productIdx] = data;
     await fs.promises.writeFile(this.filename, JSON.stringify(list));
   };
@@ -53,12 +64,13 @@ class FileManager {
   deleteProduct = async (id) => {
     const list = await this.getProduct();
     const products = list.some((product) => product.id === id);
+
     products
       ? console.log(`Se elimino el producto con id: ${id}`)
       : console.log(`No se encontro el producto`);
 
     await fs.promises.writeFile(
-      this.path,
+      this.filename,
       JSON.stringify(list.filter((item) => item.id !== id))
     );
   };

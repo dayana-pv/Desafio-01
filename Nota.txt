@@ -1,0 +1,49 @@
+PRODUCTO
+
+GET => localhost:8080/api/products
+GET => localhost:8080/api/products/?limit=3
+GET => localhost:8080/api/products/2
+
+
+POST => localhost:8080/api/products
+{
+    "title": "producto prueba",
+    "description": "Este es un producto prueba",
+    "code": "abc134",
+    "price": 400,
+    "stock": 25,
+    "category": "Categoria 01",
+    "thumbnail": ["https://ohhsorpresa.pe/wp-content/uploads/2019/07/producto_prueba.jpg", "https://ohhsorpresa.pe/wp-content/uploads/2019/07/producto_prueba.jpg"]
+}
+
+PUT => localhost:8080/api/products/2
+
+{
+        "title": "producto prueba",
+        "description": "Este es un producto prueba",
+        "code": "abc135",
+        "price": 400,
+        "stock": 25,
+        "category": "Categoria 03",
+        "thumbnail": [
+            "https://ohhsorpresa.pe/wp-content/uploads/2019/07/producto_prueba.jpg",
+            "https://ohhsorpresa.pe/wp-content/uploads/2019/07/producto_prueba.jpg"
+        ],
+        "status": true,
+        "id": 2
+    }
+
+DELETE => localhost:8080/api/products/3
+
+
+// CARRITO
+
+GET => localhost:8080/api/carts
+
+POST => localhost:8080/api/carts
+POST => localhost:8080/api/carts/1/product/2
+
+{
+    "quantity": 3
+}
+

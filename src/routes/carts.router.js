@@ -9,17 +9,33 @@ router.get("/", async (req, res) => {
   res.send(result);
 });
 
-router.get("/:idc/:idp", async (req, res) => {
-  const idc = parseInt(req.params.idc);
-  const idp = parseInt(req.params.idp);
+router.get("/:cid", async (req, res) => {
+  const cid = parseInt(req.params.cid);
+  const result = await cartsManager.idCart(cid);
+  if (!result) res.send({ status: "error", message: "Carrito no encontrado" });
+  else res.status(200).json(result);
+});
 
-  const result = await cartsManager.addProduct(idc, idp);
-  res.send(result);
+router.post("/:cid/product/:pid", async (req, res) => {
+  const cid = parseInt(req.params.cid);
+  const pid = parseInt(req.params.pid);
+
+  const data = req.body;
+  data.id = pid;
+
+  //const result = await cartsManager.addCarts(cid, data);
+  await cartsManager.addCarts(cid, data);
+
+  res.send({ status: "success", message: "Producto añadido!" });
+  //res.send(result);
 });
 
 router.post("/", async (req, res) => {
-  const result = await cartsManager.create();
-  res.send(result);
+  //const result = await cartsManager.create();
+  await cartsManager.create();
+
+  res.send({ status: "success", message: "Carrito añadido!" });
+  //res.send(result);
 });
 
 export default router;

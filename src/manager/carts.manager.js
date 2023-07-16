@@ -10,18 +10,30 @@ export default class CartsManager extends FileManager {
       products: [],
     };
 
-    return await this.set(data);
+    return await this.addCart(data);
   };
 
-  addProduct = async (idc, idp) => {
-    const cart = await this.getById(idc);
-    cart.products.push(idp);
+  idCart = async (id) => {
+    const result = await this.getProduct();
+    const cartId = result.find((item) => item.id === id);
+    return cartId;
+  };
 
-    return await this.update(cart);
+  addCarts = async (idc, data) => {
+    const cart = await this.getById(idc);
+    const idProduct = cart.products.find((item) => item.id === data.id);
+
+    if (idProduct) {
+      idProduct.quantity = idProduct.quantity + data.quantity;
+    } else {
+      cart.products.push(data);
+    }
+
+    return await this.updateProduct(idc, cart);
   };
 
   list = async () => {
-    const result = await this.get();
+    const result = await this.getProduct();
     return result;
   };
 }

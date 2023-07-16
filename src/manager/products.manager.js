@@ -25,4 +25,9 @@ export default class ProductsManager extends FileManager {
     const result = await this.updateProduct(id, data);
     return result;
   };
+
+  delete = async (id) => {
+    const result = await this.deleteProduct(id);
+    return result;
+  };
 }
